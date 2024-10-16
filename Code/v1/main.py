@@ -64,6 +64,6 @@ def analyze_sentiment(text):
         return "Neutral"
 
 # Ejemplo de uso
-texto = "Me siento muy feliz y amoroso hoy, pero ayer estaba atormentado"
+texto = input("Introduce un texto: ")
 resultado = analyze_sentiment(texto)
 print(f"El sentimiento del texto es: {resultado}")
