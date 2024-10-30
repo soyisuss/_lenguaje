@@ -2,9 +2,10 @@ from library import load_resources, analyze_text
 
 def main():
     load_resources()
-    text = "Ultimamente he estado muy feliz, empiezo el dia sonriendo y con mucha alegría. Sin embargo, en las noches me siento un poco triste"
-    sentiment_score = analyze_text(text)
+    text = "Estoy muy feliz. Me desperte sonriendos. No me gusta el enojo. No me gusta el miedo."
+    sentiment_score, emotion_counters = analyze_text(text)
     print(f"Puntaje final de sentimiento: {sentiment_score}")
+    print(f"Contadores por emoción: {emotion_counters}")
 
 if __name__ == "__main__":
     main()

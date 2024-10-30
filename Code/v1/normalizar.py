@@ -20,7 +20,9 @@ def normalize_csv(filename):
         writer.writerows(normalized_data)  # Escribir los datos normalizados
 
 # Normalizar los archivos positivas.csv y negativas.csv
-normalize_csv('positivas.csv')
-normalize_csv('negativas.csv')
+normalize_csv('enojo.csv')
+normalize_csv('felicidad.csv')
+normalize_csv('miedo.csv')
+normalize_csv('tristeza.csv')
 
 print("Archivos normalizados exitosamente.")

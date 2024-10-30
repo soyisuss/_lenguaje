@@ -24,7 +24,6 @@ def load_resources():
     emotions.update(read_emotions('tristeza.csv'))
 
     intensifiers = {"muy": 1.5, "bastante": 1.2, "poco": 0.5}
-
     negations = {"no", "nunca", "jamás"}
 
 def correct_spelling(word, dictionary):
@@ -51,35 +50,56 @@ def preprocess_text(text):
     text = text.lower()
     sentences = text.replace('!', '.').replace(';', '.').split('.')
     sentences = [s.strip() for s in sentences if s]
-    print(sentences)
     return sentences
 
 def analyze_sentence(sentence):
     words = sentence.split()
     score = 0
+    counters = {"enojo": 0, "felicidad": 0, "miedo": 0, "tristeza": 0}
     i = 0
     while i < len(words):
-        word = correct_spelling(words[i], emotions)
+        word = correct_spelling(words[i], emotions) 
         if word in negations:
             i += 1
             if i < len(words):
                 next_word = correct_spelling(words[i], emotions)
                 if next_word in emotions:
-                    score -= emotions[next_word]
+                    emotion_value = -emotions[next_word]
+                    score += emotion_value
+                    classify_emotion(counters, next_word, emotion_value)
         elif word in intensifiers:
             i += 1
             if i < len(words):
                 next_word = correct_spelling(words[i], emotions)
                 if next_word in emotions:
-                    score += emotions[next_word] * intensifiers[word]
+                    emotion_value = emotions[next_word] * intensifiers[word]
+                    score += emotion_value
+                    classify_emotion(counters, next_word, emotion_value)
         elif word in emotions:
-            score += emotions[word]
+            emotion_value = emotions[word]
+            score += emotion_value
+            classify_emotion(counters, word, emotion_value)
         i += 1
-    return score
+    return score, counters
+
+def classify_emotion(counters, word, value):
+    if word in emotions:
+        if word in read_emotions('enojo.csv'):
+            counters["enojo"] += value
+        elif word in read_emotions('felicidad.csv'):
+            counters["felicidad"] += value
+        elif word in read_emotions('miedo.csv'):
+            counters["miedo"] += value
+        elif word in read_emotions('tristeza.csv'):
+            counters["tristeza"] += value
 
 def analyze_text(text):
     sentences = preprocess_text(text)
-    total_score = sum(analyze_sentence(sentence) for sentence in sentences)
-    return total_score
-
-
+    total_score = 0
+    emotion_counters = {"enojo": 0, "felicidad": 0, "miedo": 0, "tristeza": 0}
+    for sentence in sentences:
+        sentence_score, sentence_counters = analyze_sentence(sentence)
+        total_score += sentence_score
+        for emotion, count in sentence_counters.items():
+            emotion_counters[emotion] += count
+    return total_score, emotion_counters
